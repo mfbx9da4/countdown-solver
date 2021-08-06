@@ -1,15 +1,12 @@
-
-
 class AssertionError extends Error {
-    public extra: any
-    constructor(message, extra) {
-        super(message)
-        this.name = 'AssertionError'
-        this.message = message
-        this.extra = extra
-    }
+  public extra: any
+  constructor(message, extra) {
+    super(message)
+    this.name = 'AssertionError'
+    this.message = message
+    this.extra = extra
+  }
 }
-
 
 const defaultOpts = { log: true }
 
@@ -22,6 +19,7 @@ function assert(
   if (!predicate) {
     const error = new AssertionError(message, extra)
     if (opts.log) {
+      // eslint-disable-next-line no-console
       console.log('AssertionError:', message, extra)
       console.error(error)
     }
