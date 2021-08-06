@@ -38,7 +38,6 @@ export const Home = (): JSX.Element => {
   useEffect(() => {
     const input = [randomTarget(), randomInputs(6)] as const
     let bestDistance = Infinity
-    let i = 0
     const results = []
     worker.postMessage({ type: 'start', input })
     worker.onmessage = ({ data }) => {
@@ -50,9 +49,6 @@ export const Home = (): JSX.Element => {
           setOut({ input, results })
         }
         if (x.distance === 0) worker.postMessage({ type: 'stop' })
-        if (++i % 5000 === 0) {
-          console.log('generated', i) // eslint-disable-line no-console
-        }
       }
     }
   }, [])

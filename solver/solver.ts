@@ -103,7 +103,7 @@ function evaluate(expression: Expression): number {
 export function* solve(
   target: number,
   inputs: number[]
-): Generator<Result, Result[], Result> {
+): Generator<Result, void, Result> {
   if (!inputs.length) throw new Error('no inputs')
   const root: Node = {
     expression: [],
@@ -111,7 +111,6 @@ export function* solve(
     priority: target,
     remaining: inputs,
   }
-  const results: Result[] = []
   const heap = new MinHeap<Node>()
   heap.push(root)
   while (heap.length) {
@@ -134,7 +133,6 @@ export function* solve(
         ) {
           bestDistance = distance
           const result: Result = { expression, output, distance }
-          results.push(result)
           yield result
         }
       }
@@ -169,5 +167,4 @@ export function* solve(
       }
     }
   }
-  return results
 }
