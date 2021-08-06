@@ -73,7 +73,7 @@ function evaluate(expression: Expression): number {
   try {
     return eval(expression.join(''))
   } catch (e) {
-    // console.log('failed to evaluate', expression.join(''))
+    console.log('failed to evaluate', expression.join('')) // eslint-disable-line
     return NaN
   }
 }
@@ -119,6 +119,7 @@ function evaluate(expression: Expression): number {
  *  * Remove unnecessary brackets
  *  * The order of the same number shouldn't matter
  *  * Under addition or multiplication order should not matter
+ *  * Smart parens - not needed if associative
  */
 export function* solve(
   target: number,
