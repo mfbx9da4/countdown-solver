@@ -1,3 +1,5 @@
+import { MinHeap } from './MinHeap'
+
 const ops = ['*', '/', '+', '-'] as const
 type Op = typeof ops[number]
 const open = '('
@@ -18,32 +20,6 @@ interface Result {
   output: number
   distance: number
 }
-
-class MinHeap<T extends { priority: number }> {
-  private heap: T[] = []
-  push(node: T) {
-    // TODO: implement
-    this.heap.push(node)
-  }
-  pop() {
-    // TODO: implement
-    return this.heap.pop()
-  }
-
-  get length() {
-    return this.heap.length
-  }
-}
-
-// function closeTrailingParens(node: Node) {
-//   let balance = node.balance
-//   const expression = [...node.expression]
-//   while (balance > 0) {
-//     expression.push(close)
-//     balance--
-//   }
-//   return expression
-// }
 
 function parenthesize(expression: Expression): Expression[] {
   if (expression.length === 3) return [[open, ...expression, close]]
@@ -119,7 +95,10 @@ function evaluate(expression: Expression): number {
  *  * Remove unnecessary brackets
  *  * The order of the same number shouldn't matter
  *  * Under addition or multiplication order should not matter
+ *  * Division can only be performed if it has no remainder
  *  * Smart parens - not needed if associative
+ *    * if next and prev ops are associative - skip parens
+ *  * If we've precomputed for the remaining distance then use it
  */
 export function* solve(
   target: number,
@@ -141,23 +120,32 @@ export function* solve(
     // console.log('node.state', node)
 
     if (node.needsOp) {
-      let distance = Infinity
+      let bestDistance = Infinity
       for (const expression of parenthesize(node.expression)) {
         const output = evaluate(expression)
-        distance = Math.abs(target - output)
-        if (isNaN(output)) continue
-        const result: Result = { expression, output, distance }
-        results.push(result)
-        yield result
+        const distance = Math.abs(target - output)
+        // if (isNaN(output) || output === Infinity || output === -Infinity) {
+        //   continue
+        // }
+        if (
+          Number.isSafeInteger(output) &&
+          distance < bestDistance &&
+          output > 0
+        ) {
+          bestDistance = distance
+          const result: Result = { expression, output, distance }
+          results.push(result)
+          yield result
+        }
       }
 
-      if (node.remaining.length !== 0) {
+      if (node.remaining.length !== 0 && bestDistance !== Infinity) {
         // add an op
         for (const op of ops) {
           const child: Node = {
             ...node,
             expression: [...node.expression, op],
-            priority: distance,
+            priority: bestDistance,
             needsOp: false,
           }
           heap.push(child)
