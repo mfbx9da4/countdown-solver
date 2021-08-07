@@ -27,16 +27,45 @@ interface Result {
   distance: number
 }
 
+function parenthesize(expression: Expression): Expression[] {
+  if (expression.length === 3) return [[open, ...expression, close]]
+  if (expression.length < 3) return [expression]
+  const ret: Expression[] = []
+  ret.push(expression)
+  for (let size = expression.length - 2; size > 2; size -= 2) {
+    for (let i = 0; i <= expression.length - size; i += 2) {
+      for (const before of parenthesize(expression.slice(0, i))) {
+        for (const middle of parenthesize(expression.slice(i, i + size))) {
+          for (const end of parenthesize(expression.slice(i + size))) {
+            ret.push([...before, ...middle, ...end])
+          }
+        }
+      }
+    }
+  }
+  return ret
+}
+
+// const arg = [25, '+', 25, '+', 75]
+// for (const p of parenthesize(arg)) {
+//   console.log('r', p.join(''))
+// }
+
+function evalPairs(expression: Expression): number {
+  let ret = 0
+  let lastOp = '+'
+  for (let i = 0; i < expression.length; i += 2) {
+    const num = expression[i]
+    ret = applyOp[lastOp](ret, num)
+    lastOp = expression[i + 1] as Op
+  }
+  return ret
+}
+
 function evaluate(expression: Expression): number {
   try {
-    let ret = 0
-    let lastOp = '+'
-    for (let i = 0; i < expression.length; i += 2) {
-      const num = expression[i]
-      ret = applyOp[lastOp](ret, num)
-      lastOp = expression[i + 1] as Op
-    }
-    return ret
+    // return evalPairs(expression)
+    return eval(expression.join(''))
   } catch (e) {
     console.log('failed to evaluate', expression.join('')) // eslint-disable-line
     return NaN
@@ -100,28 +129,6 @@ export function* solve(
     priority: target,
     remaining: inputs,
   }
-  const inputCounts: Record<number, number> = {}
-  for (const input of inputs) {
-    inputCounts[input] = (inputCounts[input] || 0) + 1
-  }
-  const isValidComplement = (a: Expression, b: Expression) => {
-    const totalCounts: Record<number, number> = {}
-    for (const num of a) {
-      if (typeof num === 'number') {
-        totalCounts[num] = (totalCounts[num] || 0) + 1
-        if (totalCounts[num] > inputCounts[num]) return false
-      }
-    }
-    for (const num of b) {
-      if (typeof num === 'number') {
-        totalCounts[num] = (totalCounts[num] || 0) + 1
-        if (totalCounts[num] > inputCounts[num]) return false
-      }
-    }
-    return true
-  }
-
-  // const precomputed = new Map<number, Expression>()
   const heap = new MinHeap<Node>()
   heap.push(root)
   while (heap.length) {
@@ -131,32 +138,19 @@ export function* solve(
 
     if (node.needsOp) {
       let bestDistance = Infinity
-      const output = evaluate(node.expression)
-      // as per countdown rules can never go below zero, must be int
-      const isValid = Number.isSafeInteger(output) && output > 0
-      const distance = isValid ? Math.abs(target - output) : Infinity
-      bestDistance = Math.min(distance, bestDistance)
-      const result: Result = { expression: node.expression, output, distance }
-      yield result
-      if (!isValid) continue // early exit exploring further
-      // precomputed.set(output, node.expression)
-      // try looking for if we have precomputed the complement
-      // const complement = target / output
-      // const complementExpression = precomputed.get(complement)
-      // if (complementExpression) {
-      //   if (isValidComplement(complementExpression, node.expression)) {
-      //     yield {
-      //       expression: [...node.expression, '*', ...complementExpression],
-      //       output: target,
-      //       distance: 0,
-      //     }
-      //   }
-      // }
-      // complement = output / target
-      // complement = target - output
-      // complement = output - target
+      for (const expression of parenthesize(node.expression)) {
+        const output = evaluate(expression)
+        const distance = Math.abs(target - output)
+        const isValid =
+          Number.isSafeInteger(output) && distance < bestDistance && output > 0
+        if (isValid) {
+          bestDistance = distance
+          const result: Result = { expression, output, distance }
+          yield result
+        }
+      }
 
-      if (node.remaining.length !== 0) {
+      if (node.remaining.length !== 0 && bestDistance !== Infinity) {
         // add an op
         for (const op of ops) {
           const child: Node = {

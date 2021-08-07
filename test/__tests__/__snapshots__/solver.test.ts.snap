@@ -1,0 +1,159 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`solver 2 permutations 1`] = `
+Array [
+  Object {
+    "distance": 3,
+    "expression": Array [
+      1,
+    ],
+    "output": 1,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      1,
+      "*",
+      2,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 1,
+    "expression": Array [
+      1,
+      "+",
+      2,
+    ],
+    "output": 3,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+      "*",
+      1,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 3,
+    "expression": Array [
+      2,
+      "-",
+      1,
+    ],
+    "output": 1,
+  },
+  Object {
+    "distance": 1,
+    "expression": Array [
+      2,
+      "+",
+      1,
+    ],
+    "output": 3,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+      "/",
+      1,
+    ],
+    "output": 2,
+  },
+]
+`;
+
+exports[`solver all permutations 1`] = `
+Array [
+  Object {
+    "distance": 3,
+    "expression": Array [
+      1,
+    ],
+    "output": 1,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      1,
+      "*",
+      2,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 1,
+    "expression": Array [
+      1,
+      "+",
+      2,
+    ],
+    "output": 3,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+      "*",
+      1,
+    ],
+    "output": 2,
+  },
+  Object {
+    "distance": 3,
+    "expression": Array [
+      2,
+      "-",
+      1,
+    ],
+    "output": 1,
+  },
+  Object {
+    "distance": 1,
+    "expression": Array [
+      2,
+      "+",
+      1,
+    ],
+    "output": 3,
+  },
+  Object {
+    "distance": 2,
+    "expression": Array [
+      2,
+      "/",
+      1,
+    ],
+    "output": 2,
+  },
+]
+`;
+
+exports[`solver base case 1`] = `
+Array [
+  Object {
+    "distance": 0,
+    "expression": Array [
+      1,
+    ],
+    "output": 1,
+  },
+]
+`;

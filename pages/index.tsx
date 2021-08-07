@@ -1,15 +1,5 @@
 import { useEffect, useState } from 'react'
-
-const randInt = (a: number, b: number) =>
-  Math.round(Math.random() * (b - a)) + a
-
-function choose<T>(arr: T[]) {
-  return () => {
-    const i = randInt(0, arr.length - 1)
-    const [item] = arr.splice(i, 1)
-    return item
-  }
-}
+import { choose, randInt } from '../randInt'
 
 const bigOneGenerator = () => choose([25, 50, 75, 100])
 const smallOneGenerator = () => {
@@ -37,18 +27,22 @@ export const Home = (): JSX.Element => {
 
   useEffect(() => {
     const input = [randomTarget(), randomInputs(6)] as const
-    let bestDistance = Infinity
+    // const input = [283, [75, 25, 8, 10, 5, 3]]
+    // const input = [400, [75, 10, 5, 9, 8, 4]]
+    // const input = [734, [100, 50, 8, 10, 10, 3]]
+    // const input = [13, [11, 6, 8]]
+    // let bestDistance = Infinity
     const results = []
     worker.postMessage({ type: 'start', input })
     worker.onmessage = ({ data }) => {
       if (data.type === 'result') {
         const x = data
-        if (x.distance < bestDistance) {
-          bestDistance = x.distance
+        if (x.distance <= 10) {
+          // bestDistance = x.distance
           results.push(x.formatted)
-          setOut({ input, results })
+          setOut({ input, length: results.length, results })
         }
-        if (x.distance === 0) worker.postMessage({ type: 'stop' })
+        // if (x.distance === 0) worker.postMessage({ type: 'stop' })
       }
     }
   }, [])
