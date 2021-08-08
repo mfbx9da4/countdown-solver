@@ -5,19 +5,17 @@ const applyOp: Record<Op, (a: number, b: number) => number> = {
   '+': (a, b) => a + b,
   '-': (a, b) => a - b,
 }
-type Op = typeof ops[number]
+export type Op = typeof ops[number]
 const open = '('
 const close = ')'
 type Paren = typeof open | typeof close
-type Expression = Array<Op | Paren | number>
+export type Expression = Array<Op | Paren | number>
 
 interface Node {
   output?: number
   expression: Expression
   needsOp: boolean
   remaining: number[]
-  /** distance to the target */
-  priority: number
 }
 
 export interface Result {
@@ -26,20 +24,16 @@ export interface Result {
   distance: number
 }
 
-function evaluate(expression: Expression): number {
-  try {
-    let ret = 0
-    let lastOp = '+'
-    for (let i = 0; i < expression.length; i += 2) {
-      const num = expression[i]
-      ret = applyOp[lastOp](ret, num)
-      lastOp = expression[i + 1] as Op
-    }
-    return ret
-  } catch (e) {
-    console.log('failed to evaluate', expression.join('')) // eslint-disable-line
-    return NaN
-  }
+export function evaluatePair(a: number, b: number, op: Op): number {
+  return applyOp[op](a, b)
+}
+
+function evaluate(node: Node) {
+  return evaluatePair(
+    node.output || 0,
+    (node.expression[node.expression.length - 1] as number) || 0,
+    (node.expression[node.expression.length - 2] as Op) || '+'
+  )
 }
 
 /**
@@ -54,25 +48,24 @@ export function* solve(
   const root: Node = {
     expression: [],
     needsOp: false,
-    priority: target,
     remaining: inputs,
   }
 
-  const heap = []
-  heap.push(root)
-  while (heap.length) {
-    const node = heap.pop()
+  const queue = []
+  queue.push(root)
+  while (queue.length) {
+    const node = queue.pop()
 
     if (node.needsOp) {
       let bestDistance = Infinity
-      const output = evaluate(node.expression)
+      const output = evaluate(node)
       // as per countdown rules can never go below zero, must be int
       const isValid = Number.isSafeInteger(output) && output > 0
       const distance = isValid ? Math.abs(target - output) : Infinity
       bestDistance = Math.min(distance, bestDistance)
       const result: Result = { expression: node.expression, output, distance }
       yield result
-      if (!isValid) continue // early exit exploring further
+      if (!isValid) continue // early exit from exploring further
 
       if (node.remaining.length !== 0) {
         // add an op
@@ -81,10 +74,9 @@ export function* solve(
             ...node,
             output,
             expression: [...node.expression, op],
-            priority: bestDistance,
             needsOp: false,
           }
-          heap.push(child)
+          queue.push(child)
         }
       }
     } else {
@@ -121,7 +113,7 @@ export function* solve(
           expression: [...node.expression, num],
           needsOp: true,
         }
-        heap.push(child)
+        queue.push(child)
       }
     }
   }

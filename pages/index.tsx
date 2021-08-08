@@ -60,7 +60,7 @@ export const Home = (): JSX.Element => {
         return setOut({
           input,
           target,
-          length: results.length,
+          solutions: results.length,
           done: true,
           permutations: data.permutations,
         })
@@ -109,7 +109,7 @@ export const Home = (): JSX.Element => {
           setOut({
             input,
             target,
-            length: results.length,
+            solutions: results.length,
             permutations: x.permutations,
           })
         }
