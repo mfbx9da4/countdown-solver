@@ -121,8 +121,29 @@ export const Home = (): JSX.Element => {
 
   return (
     <div className="">
-      <button onClick={run}>Run again</button>
-      <pre>{JSON.stringify(out, null, 2)}</pre>
+      <div style={{ display: 'flex', padding: '20px' }}>
+        <pre style={{ width: '188px' }}>{JSON.stringify(out, null, 2)}</pre>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+          }}
+        >
+          <button
+            style={{
+              width: '60%',
+              height: '70px',
+              maxWidth: '400px',
+              borderRadius: '10px',
+            }}
+            onClick={run}
+          >
+            New numbers
+          </button>
+        </div>
+      </div>
       <div
         style={{
           position: 'relative',
