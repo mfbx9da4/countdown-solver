@@ -128,12 +128,29 @@ export const Home = (): JSX.Element => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            flexDirection: 'column',
             flex: 1,
           }}
         >
-          <pre style={{ width: '188px', height: '217px' }}>
-            {JSON.stringify(out, null, 2)}
-          </pre>
+          <div className="info-table">
+            <div>Inputs:</div>
+            <div>
+              <div style={{ display: 'flex' }}>
+                {out.input?.map((x, i) => (
+                  <div className="input-number" key={i}>
+                    {x}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>Target:</div>
+            <div>{out.target}</div>
+            <div>Permutations:</div>
+            <div>{out.permutations}</div>
+            <div>Done:</div>
+            <div>{out.done ? '✅' : '⏳'}</div>
+          </div>
+
           <div style={{ width: '60%', maxWidth: '400px' }}>
             <button
               style={{
@@ -207,6 +224,18 @@ export const Home = (): JSX.Element => {
 
         * {
           box-sizing: border-box;
+        }
+        .info-table {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 4px 0;
+        }
+        .info-table > div {
+          padding: 4px;
+        }
+
+        .input-number {
+          padding-right: 5px;
         }
       `}</style>
     </div>
