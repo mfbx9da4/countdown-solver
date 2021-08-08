@@ -136,7 +136,7 @@ export const Home = (): JSX.Element => {
               style={{
                 width: '100%',
                 height: '70px',
-                background: 'var(--background)',
+                background: 'hsl(225deg 6% 19%)',
                 color: 'hsl(210deg 11% 92%)',
                 border: '4px solid hsl(210deg 11% 92%)',
                 outline: 0,
