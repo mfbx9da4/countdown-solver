@@ -137,6 +137,7 @@ export const Home = (): JSX.Element => {
               height: '70px',
               maxWidth: '400px',
               borderRadius: '10px',
+              fontSize: '18px',
             }}
             onClick={run}
           >
