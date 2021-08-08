@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Tree } from '../components/Tree'
 import { BaseTreeNode, layout } from '../layout/layout'
-import { choose, randInt } from '../randInt'
+import { choose, randInt } from '../solver/randInt'
 
 const bigOneGenerator = () => choose([25, 50, 75, 100])
 const smallOneGenerator = () => {
