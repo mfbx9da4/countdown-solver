@@ -45,14 +45,13 @@ export const Home = (): JSX.Element => {
     // const input = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
     // const input = [13, [11, 6, 8]] as const // few solutions
     // const input = [156, [50, 25, 75, 100, 2, 8]] as const // 207 solutions
-    // const input = [105, [50, 5, 4, 8, 10, 4]] as const // many duplicate solutions
+    // const input = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
     const [target] = input
     const root = {
       attributes: { char: '', distance: target, output: 0 },
       children: [],
     }
     setTree(root)
-    // let bestDistance = Infinity
     const results = []
     worker.postMessage({ type: 'start', input })
     worker.onmessage = ({ data }) => {
@@ -67,10 +66,7 @@ export const Home = (): JSX.Element => {
       }
       if (data.type === 'result') {
         const x = data
-        // if (x.distance <= 10) {
-        // if (x.distance <= bestDistance) {
         if (x.distance === 0) {
-          // bestDistance = x.distance
           results.push(x.formatted)
 
           let isLeaf = 0 === x.expression.length - 1
@@ -116,7 +112,6 @@ export const Home = (): JSX.Element => {
             permutations: x.permutations,
           })
         }
-        // if (x.distance === 0) worker.postMessage({ type: 'stop' })
       }
     }
   }, [])
@@ -127,16 +122,12 @@ export const Home = (): JSX.Element => {
     <div className="">
       <button onClick={run}>Run again</button>
       <pre>
-        {JSON.stringify(
-          {
-            input: out.input,
-            length: out.results?.length,
-            done: out.done,
-            permutations: out.permutations,
-          },
-          null,
-          2
-        )}
+        {JSON.stringify({
+          input: out.input,
+          length: out.results?.length,
+          done: out.done,
+          permutations: out.permutations,
+        })}
       </pre>
       <div
         style={{
@@ -151,9 +142,6 @@ export const Home = (): JSX.Element => {
           <Tree tree={tree} />
         </svg>
       </div>
-      {/* <pre>{JSON.stringify(outputTree, null, 2)}</pre>
-      <pre>{JSON.stringify(out, null, 2)}</pre> */}
-
       <style jsx global>{`
         :root {
           --background: #202124;
