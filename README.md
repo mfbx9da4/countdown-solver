@@ -4,7 +4,7 @@ This app displays all possible solutions for a Countdown numbers round in tree f
 
 - [Demo](https://countdown-solver.vercel.app)
 
-![image](https://user-images.githubusercontent.com/1690659/128640586-f7a7cacb-1adf-42d7-af4c-95740f91cf62.png)
+![image](https://user-images.githubusercontent.com/1690659/128640875-ebb38ed6-dfd6-4783-906c-c12497c2e348.png)
 
 If you haven't seen Countdown, it's a game show. Watch a [quick numbers round](https://www.youtube.com/watch?v=pfa3MHLLSWI).
 The numbers round goes like this:
