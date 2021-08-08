@@ -1,4 +1,4 @@
-# [Countdown solver](https://countdown-solver.vercel.app)
+# [Countdown solver 🕧](https://countdown-solver.vercel.app)
 
 This app displays all possible solutions for a Countdown numbers round in tree form.
 
