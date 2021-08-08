@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Tree } from '../components/Tree'
 import { BaseTreeNode, layout } from '../layout/layout'
 import { choose, randInt } from '../randInt'
-import { Result } from '../solver/solver'
 
 const bigOneGenerator = () => choose([25, 50, 75, 100])
 const smallOneGenerator = () => {
@@ -43,9 +42,9 @@ export const Home = (): JSX.Element => {
   const outputTree = inputTree ? layout(inputTree) : undefined
 
   useEffect(() => {
-    // const input = [randomTarget(), randomInputs(6)] as const
+    const input = [randomTarget(), randomInputs(6)] as const
     // many solutions
-    const input = [550, [50, 75, 5, 2, 9, 3]] as const
+    // const input = [550, [50, 75, 5, 2, 9, 3]] as const
     // const input = [13, [11, 6, 8]] as const
     const [target] = input
     const root = {

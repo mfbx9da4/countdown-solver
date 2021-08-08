@@ -14,7 +14,7 @@ export function davidStrategy<T>(
   for (let i = 0; i < node.children.length; i++) {
     const child = node.children[i]
     if (!child) continue
-    let subtree = davidStrategy(child, depth + 1, siblingCount, rightMost)
+    const subtree = davidStrategy(child, depth + 1, siblingCount, rightMost)
     // Keep track of the right most contour for each subtree
     // Ensure the subtrees don't overlap
     rightMost = Math.max(subtree.rightMost, rightMost)

@@ -1,12 +1,6 @@
 import { MinHeap } from './MinHeap'
 
 const ops = ['*', '/', '+', '-'] as const
-const applyOp: Record<Op, (a: number, b: number) => number> = {
-  '*': (a, b) => a * b,
-  '/': (a, b) => a / b,
-  '+': (a, b) => a + b,
-  '-': (a, b) => a - b,
-}
 type Op = typeof ops[number]
 const open = '('
 const close = ')'
@@ -50,17 +44,6 @@ function parenthesize(expression: Expression): Expression[] {
 // for (const p of parenthesize(arg)) {
 //   console.log('r', p.join(''))
 // }
-
-function evalPairs(expression: Expression): number {
-  let ret = 0
-  let lastOp = '+'
-  for (let i = 0; i < expression.length; i += 2) {
-    const num = expression[i]
-    ret = applyOp[lastOp](ret, num)
-    lastOp = expression[i + 1] as Op
-  }
-  return ret
-}
 
 function evaluate(expression: Expression): number {
   try {

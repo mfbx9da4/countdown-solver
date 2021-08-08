@@ -22,7 +22,7 @@ describe('solver', () => {
 
   it('3 permutations', () => {
     const results = solve(5, [4, 2, 3])
-    console.log('results', results)
+    // console.log('results', results)
     assert.strictEqual(results.length, 8, 'too many')
     const result = results.find((x) => x.distance === 1)
     assert.ok(result.distance, 'did not find closest')

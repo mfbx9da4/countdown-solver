@@ -8,4 +8,4 @@ const possible = (n) => {
   return s
 }
 
-console.log('possible(6)', possible(6))
+console.log('possible(6)', possible(6)) // eslint-disable-line no-console
