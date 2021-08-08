@@ -7,10 +7,12 @@ interface Props {
 }
 
 const getX = (node: TreeNode<Attributes>) => {
+  // inverts the tree to draw horizontally rather than vertically
   return node.position.top * 50 + 25
 }
 
 const getY = (node: TreeNode<Attributes>) => {
+  // inverts the tree to draw horizontally rather than vertically
   return node.position.left * 50 + 25
 }
 

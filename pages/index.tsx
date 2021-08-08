@@ -12,7 +12,7 @@ const randomInputs = (size = 6) => {
   const bigOne = bigOneGenerator()
   const smallOne = smallOneGenerator()
   const ret: number[] = []
-  let bigOnes = randInt(0, size - 2)
+  let bigOnes = Math.min(4, randInt(0, size - 2))
   let smallOnes = size - bigOnes
   while (bigOnes--) ret.push(bigOne())
   while (smallOnes--) ret.push(smallOne())
@@ -42,10 +42,11 @@ export const Home = (): JSX.Element => {
 
   const run = useCallback(() => {
     const inputArgs = [randomTarget(), randomInputs(6)] as const
-    // const input = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
-    // const input = [13, [11, 6, 8]] as const // few solutions
-    // const input = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
-    // const input = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
+    // const inputArgs = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
+    // const inputArgs = [952, [25, 50, 75, 100, 3, 6]] as const // only one solution
+    // const inputArgs = [13, [11, 6, 8]] as const // few solutions
+    // const inputArgs = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
+    // const inputArgs = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
     const [target, input] = inputArgs
     const root = {
       attributes: { char: '', distance: target, output: 0 },
@@ -130,15 +131,17 @@ export const Home = (): JSX.Element => {
             flex: 1,
           }}
         >
-          <pre style={{ width: '188px' }}>{JSON.stringify(out, null, 2)}</pre>
+          <pre style={{ width: '188px', height: '217px' }}>
+            {JSON.stringify(out, null, 2)}
+          </pre>
           <div style={{ width: '60%', maxWidth: '400px' }}>
             <button
               style={{
                 width: '100%',
                 height: '70px',
-                background: 'hsl(225deg 6% 19%)',
-                color: 'hsl(210deg 11% 92%)',
+                background: 'hsl(210deg 11% 92%)',
                 border: '4px solid hsl(210deg 11% 92%)',
+                color: 'hsl(210deg 11% 12%)',
                 outline: 0,
                 cursor: 'pointer',
                 borderRadius: '10px',
