@@ -44,7 +44,7 @@ export const Home = (): JSX.Element => {
     const inputArgs = [randomTarget(), randomInputs(6)] as const
     // const input = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
     // const input = [13, [11, 6, 8]] as const // few solutions
-    // const input = [156, [50, 25, 75, 100, 2, 8]] as const // 207 solutions
+    // const input = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
     // const input = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
     const [target, input] = inputArgs
     const root = {
@@ -131,18 +131,40 @@ export const Home = (): JSX.Element => {
           }}
         >
           <pre style={{ width: '188px' }}>{JSON.stringify(out, null, 2)}</pre>
-          <button
-            style={{
-              width: '60%',
-              height: '70px',
-              maxWidth: '400px',
-              borderRadius: '10px',
-              fontSize: '18px',
-            }}
-            onClick={run}
-          >
-            New numbers
-          </button>
+          <div style={{ width: '60%', maxWidth: '400px' }}>
+            <button
+              style={{
+                width: '100%',
+                height: '70px',
+
+                borderRadius: '10px',
+                fontSize: '18px',
+              }}
+              onClick={run}
+            >
+              New numbers
+            </button>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '12px',
+              }}
+            >
+              <a
+                href="https://github.com/mfbx9da4/countdown-solver/tree/main"
+                rel="noreferrer"
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--font-color)',
+                  borderBottom: '1px solid var(--font-color)',
+                  textDecoration: 'none',
+                }}
+              >
+                GitHub source
+              </a>
+            </div>
+          </div>
         </div>
       </div>
       <div
