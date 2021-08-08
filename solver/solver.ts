@@ -14,6 +14,7 @@ type Paren = typeof open | typeof close
 type Expression = Array<Op | Paren | number>
 
 interface Node {
+  output?: number
   expression: Expression
   needsOp: boolean
   remaining: number[]
@@ -21,7 +22,7 @@ interface Node {
   priority: number
 }
 
-interface Result {
+export interface Result {
   expression: Expression
   output: number
   distance: number
@@ -100,26 +101,26 @@ export function* solve(
     priority: target,
     remaining: inputs,
   }
-  const inputCounts: Record<number, number> = {}
-  for (const input of inputs) {
-    inputCounts[input] = (inputCounts[input] || 0) + 1
-  }
-  const isValidComplement = (a: Expression, b: Expression) => {
-    const totalCounts: Record<number, number> = {}
-    for (const num of a) {
-      if (typeof num === 'number') {
-        totalCounts[num] = (totalCounts[num] || 0) + 1
-        if (totalCounts[num] > inputCounts[num]) return false
-      }
-    }
-    for (const num of b) {
-      if (typeof num === 'number') {
-        totalCounts[num] = (totalCounts[num] || 0) + 1
-        if (totalCounts[num] > inputCounts[num]) return false
-      }
-    }
-    return true
-  }
+  // const inputCounts: Record<number, number> = {}
+  // for (const input of inputs) {
+  //   inputCounts[input] = (inputCounts[input] || 0) + 1
+  // }
+  // const isValidComplement = (a: Expression, b: Expression) => {
+  //   const totalCounts: Record<number, number> = {}
+  //   for (const num of a) {
+  //     if (typeof num === 'number') {
+  //       totalCounts[num] = (totalCounts[num] || 0) + 1
+  //       if (totalCounts[num] > inputCounts[num]) return false
+  //     }
+  //   }
+  //   for (const num of b) {
+  //     if (typeof num === 'number') {
+  //       totalCounts[num] = (totalCounts[num] || 0) + 1
+  //       if (totalCounts[num] > inputCounts[num]) return false
+  //     }
+  //   }
+  //   return true
+  // }
 
   // const precomputed = new Map<number, Expression>()
   const heap = new MinHeap<Node>()
@@ -161,6 +162,7 @@ export function* solve(
         for (const op of ops) {
           const child: Node = {
             ...node,
+            output,
             expression: [...node.expression, op],
             priority: bestDistance,
             needsOp: false,
@@ -172,6 +174,29 @@ export function* solve(
       for (let i = 0; i < node.remaining.length; i++) {
         // pick a number from remaining
         const num = node.remaining[i]
+
+        // if the op is + and last op is (+|undefined)
+        // and num < last num - we can skip it
+        // if the op is * and last op is (*|undefined)
+        // and num < last num - we can skip it
+        const op = node.expression[node.expression.length - 1]
+        const lastNum = node.expression[node.expression.length - 2]
+        const lastOp = node.expression[node.expression.length - 3]
+        if (
+          op === '+' &&
+          (lastOp === '+' || lastOp === undefined) &&
+          num > lastNum
+        ) {
+          continue
+        }
+        if (
+          op === '*' &&
+          (lastOp === '*' || lastOp === undefined) &&
+          num > lastNum
+        ) {
+          continue
+        }
+
         const remaining = [
           ...node.remaining.slice(0, i),
           ...node.remaining.slice(i + 1),

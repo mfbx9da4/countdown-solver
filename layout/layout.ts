@@ -1,5 +1,4 @@
 import { davidStrategy } from './davidStrategy'
-import { reingoldTilfordStrategy } from './reingoldTilford'
 
 type Position = { left: number; top: number }
 
@@ -18,7 +17,6 @@ export type TreeNode<T> = Omit<BaseTreeNode<T>, 'children'> & {
 
 export function layout<T>(input: BaseTreeNode<T>): TreeNode<T> {
   const tree = createTree(input)
-  // reingoldTilfordStrategy(tree)
   davidStrategy(tree)
   return tree
 }
