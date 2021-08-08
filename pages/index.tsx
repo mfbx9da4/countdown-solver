@@ -122,7 +122,6 @@ export const Home = (): JSX.Element => {
   return (
     <div className="">
       <div style={{ display: 'flex', padding: '20px' }}>
-        <pre style={{ width: '188px' }}>{JSON.stringify(out, null, 2)}</pre>
         <div
           style={{
             display: 'flex',
@@ -131,6 +130,7 @@ export const Home = (): JSX.Element => {
             flex: 1,
           }}
         >
+          <pre style={{ width: '188px' }}>{JSON.stringify(out, null, 2)}</pre>
           <button
             style={{
               width: '60%',
