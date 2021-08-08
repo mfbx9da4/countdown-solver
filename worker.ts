@@ -21,12 +21,7 @@ addEventListener('message', async (event) => {
       if (!strings.has(asStr)) {
         // we can get duplicates if the list has dupes
         strings.add(asStr)
-        postMessage({
-          type: 'result',
-          ...x,
-          formatted: `${asStr} = ${x.output} :: (${x.distance})`,
-          permutations: i,
-        })
+        postMessage({ type: 'result', ...x, permutations: i })
       }
       if (++i % 20000 === 0) {
         await sleep(0)

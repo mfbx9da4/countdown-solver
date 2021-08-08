@@ -12,7 +12,7 @@ type Paren = typeof open | typeof close
 export type Expression = Array<Op | Paren | number>
 
 interface Node {
-  output?: number
+  outputs: number[]
   expression: Expression
   needsOp: boolean
   remaining: number[]
@@ -20,7 +20,7 @@ interface Node {
 
 export interface Result {
   expression: Expression
-  output: number
+  outputs: number[]
   distance: number
 }
 
@@ -30,7 +30,7 @@ export function evaluatePair(a: number, b: number, op: Op): number {
 
 function evaluate(node: Node) {
   return evaluatePair(
-    node.output || 0,
+    node.outputs[node.outputs.length - 1] || 0,
     (node.expression[node.expression.length - 1] as number) || 0,
     (node.expression[node.expression.length - 2] as Op) || '+'
   )
@@ -46,6 +46,7 @@ export function* solve(
 ): Generator<Result, void, Result> {
   if (!inputs.length) throw new Error('no inputs')
   const root: Node = {
+    outputs: [],
     expression: [],
     needsOp: false,
     remaining: inputs,
@@ -63,7 +64,8 @@ export function* solve(
       const isValid = Number.isSafeInteger(output) && output > 0
       const distance = isValid ? Math.abs(target - output) : Infinity
       bestDistance = Math.min(distance, bestDistance)
-      const result: Result = { expression: node.expression, output, distance }
+      const outputs = [...node.outputs, output]
+      const result: Result = { expression: node.expression, outputs, distance }
       yield result
       if (!isValid) continue // early exit from exploring further
 
@@ -72,7 +74,7 @@ export function* solve(
         for (const op of ops) {
           const child: Node = {
             ...node,
-            output,
+            outputs,
             expression: [...node.expression, op],
             needsOp: false,
           }

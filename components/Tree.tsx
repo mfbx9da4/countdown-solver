@@ -4,6 +4,7 @@ import { Attributes } from '../pages'
 
 interface Props {
   tree?: TreeNode<Attributes>
+  depth?: number
 }
 
 const getX = (node: TreeNode<Attributes>) => {
@@ -16,8 +17,10 @@ const getY = (node: TreeNode<Attributes>) => {
   return node.position.left * 50 + 25
 }
 
-export function Tree({ tree }: Props) {
+export function Tree({ tree, depth }: Props) {
   if (!tree) return null
+
+  depth = depth !== undefined ? depth : -1
 
   const { attributes } = tree
   const x = getX(tree)
@@ -47,7 +50,7 @@ export function Tree({ tree }: Props) {
           stroke={attributes.isTarget ? 'white' : 'var(--font-color)'}
           strokeWidth="2"
         >
-          <title>{attributes.output}</title>
+          <title>{attributes.outputs[depth]}</title>
         </circle>
         <text
           x={x}
@@ -57,13 +60,15 @@ export function Tree({ tree }: Props) {
           style={{
             fontSize: '12px',
             fill: attributes.isTarget ? 'white' : 'var(--font-color)',
+            userSelect: 'none',
           }}
         >
+          <title>{attributes.outputs[depth]}</title>
           {attributes.char || 'root'}
         </text>
       </g>
       {tree.children.map((x, i) => (
-        <Tree key={i} tree={x} />
+        <Tree key={i} tree={x} depth={depth + 1} />
       ))}
     </>
   )

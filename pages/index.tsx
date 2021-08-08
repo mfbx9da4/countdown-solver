@@ -30,7 +30,7 @@ export type Attributes = {
   isLeaf?: boolean
   isTarget?: boolean
   expression?: string[]
-  output?: number
+  outputs: number[]
   distance?: number
 }
 
@@ -49,7 +49,7 @@ export const Home = (): JSX.Element => {
     // const inputArgs = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
     const [target, input] = inputArgs
     const root = {
-      attributes: { char: '', distance: target, output: 0 },
+      attributes: { char: '', distance: target, outputs: [] },
       children: [],
     }
     setTree(root)
