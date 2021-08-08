@@ -10,7 +10,9 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 addEventListener('message', async (event) => {
   if (event.data.type === 'start' || event.data.type === 'stop') {
     shouldContinue = false
-    // TODO: need to wait for ack that process has stopped before starting new one
+    // TODO: this is flakey, race condition, is it not a queue?
+    // wait for the the ack that the iterator has stopped
+    await sleep(0)
   }
   if (event.data.type === 'start') {
     strings = new Set<string>()
@@ -26,7 +28,9 @@ addEventListener('message', async (event) => {
       }
       if (++i % 20000 === 0) {
         await sleep(0)
-        if (!shouldContinue) break
+        if (!shouldContinue) {
+          break
+        }
       }
     }
     postMessage({ type: 'done', permutations: i })
