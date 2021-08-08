@@ -41,25 +41,26 @@ export const Home = (): JSX.Element => {
   const { tree, width, height } = inputTree ? layout(inputTree) : ({} as any)
 
   const run = useCallback(() => {
-    const input = [randomTarget(), randomInputs(6)] as const
+    const inputArgs = [randomTarget(), randomInputs(6)] as const
     // const input = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
     // const input = [13, [11, 6, 8]] as const // few solutions
     // const input = [156, [50, 25, 75, 100, 2, 8]] as const // 207 solutions
     // const input = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
-    const [target] = input
+    const [target, input] = inputArgs
     const root = {
       attributes: { char: '', distance: target, output: 0 },
       children: [],
     }
     setTree(root)
+    setOut({ input, target })
     const results = []
-    worker.postMessage({ type: 'start', input })
+    worker.postMessage({ type: 'start', input: inputArgs })
     worker.onmessage = ({ data }) => {
       if (data.type === 'done') {
         return setOut({
           input,
+          target,
           length: results.length,
-          results,
           done: true,
           permutations: data.permutations,
         })
@@ -107,8 +108,8 @@ export const Home = (): JSX.Element => {
           setTree(root)
           setOut({
             input,
+            target,
             length: results.length,
-            results,
             permutations: x.permutations,
           })
         }
@@ -121,14 +122,7 @@ export const Home = (): JSX.Element => {
   return (
     <div className="">
       <button onClick={run}>Run again</button>
-      <pre>
-        {JSON.stringify({
-          input: out.input,
-          length: out.results?.length,
-          done: out.done,
-          permutations: out.permutations,
-        })}
-      </pre>
+      <pre>{JSON.stringify(out, null, 2)}</pre>
       <div
         style={{
           position: 'relative',
