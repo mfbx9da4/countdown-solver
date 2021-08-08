@@ -29,7 +29,7 @@ addEventListener('message', async (event) => {
           formatted: `${asStr} = ${x.output} :: (${x.distance})`,
         })
       }
-      if (++i % 1000 === 0) {
+      if (++i % 20000 === 0) {
         console.log('generated', i) // eslint-disable-line no-console
         await sleep(0)
         if (!shouldContinue) {
