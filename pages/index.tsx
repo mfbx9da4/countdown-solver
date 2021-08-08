@@ -136,7 +136,11 @@ export const Home = (): JSX.Element => {
               style={{
                 width: '100%',
                 height: '70px',
-
+                background: 'var(--background)',
+                color: 'hsl(210deg 11% 92%)',
+                border: '4px solid hsl(210deg 11% 92%)',
+                outline: 0,
+                cursor: 'pointer',
                 borderRadius: '10px',
                 fontSize: '18px',
               }}
@@ -170,6 +174,7 @@ export const Home = (): JSX.Element => {
       <div
         style={{
           position: 'relative',
+          padding: '0 10px',
           margin: '0 auto',
           maxWidth: '500px',
         }}
