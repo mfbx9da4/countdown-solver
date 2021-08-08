@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Tree } from '../components/Tree'
 import { BaseTreeNode, layout } from '../layout/layout'
 import { choose, randInt } from '../randInt'
@@ -41,7 +41,7 @@ export const Home = (): JSX.Element => {
   // Error.stackTraceLimit = Infinity
   const outputTree = inputTree ? layout(inputTree) : undefined
 
-  useEffect(() => {
+  const run = useCallback(() => {
     const input = [randomTarget(), randomInputs(6)] as const
     // many solutions
     // const input = [550, [50, 75, 5, 2, 9, 3]] as const
@@ -56,6 +56,15 @@ export const Home = (): JSX.Element => {
     const results = []
     worker.postMessage({ type: 'start', input })
     worker.onmessage = ({ data }) => {
+      if (data.type === 'done') {
+        return setOut({
+          input,
+          length: results.length,
+          results,
+          done: true,
+          generated: data.generated,
+        })
+      }
       if (data.type === 'result') {
         const x = data
         // if (x.distance <= 10) {
@@ -107,8 +116,11 @@ export const Home = (): JSX.Element => {
     }
   }, [])
 
+  useEffect(run, [])
+
   return (
     <div className="">
+      <button onClick={run}>Run again</button>
       <pre>
         {JSON.stringify(
           { input: out.input, length: out.results?.length },
@@ -122,7 +134,7 @@ export const Home = (): JSX.Element => {
           margin: '20px',
         }}
       >
-        <svg viewBox="0 0 600 50000">
+        <svg viewBox="0 0 347 5000">
           <Tree tree={outputTree} />
         </svg>
       </div>

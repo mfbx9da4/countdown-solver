@@ -38,6 +38,7 @@ addEventListener('message', async (event) => {
         }
       }
     }
+    postMessage({ type: 'done', generated: i })
     console.log('done', i) // eslint-disable-line no-console
   }
 })
