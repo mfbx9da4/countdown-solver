@@ -15,10 +15,10 @@ export type TreeNode<T> = Omit<BaseTreeNode<T>, 'children'> & {
   thread?: TreeNode<T>
 }
 
-export function layout<T>(input: BaseTreeNode<T>): TreeNode<T> {
+export function layout<T>(input: BaseTreeNode<T>) {
   const tree = createTree(input)
-  davidStrategy(tree)
-  return tree
+  const ret = davidStrategy(tree)
+  return { tree, width: ret.rightMost - ret.leftMost, height: ret.maxDepth }
 }
 
 function createTree<T>(input: BaseTreeNode<T>): TreeNode<T> {

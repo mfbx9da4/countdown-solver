@@ -75,7 +75,17 @@ def Solve(target, numbers):
 
 # numbers = [OneFromTheTop()] + [OneOfTheOthers() for i in range(5)]
 
-target, numbers = [356, [75, 6, 8, 5, 1, 10]]
+# target, numbers = [356, [75, 6, 8, 5, 1, 10]]
+target, numbers = [
+    156,
+    [
+        50,
+        25,
+        75,
+        100,
+        2,
+        8
+    ]]
 # target, numbers = [4, [2, 2]]
 
 print("Target: {0} using {1}".format(target, numbers))

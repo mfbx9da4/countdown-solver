@@ -38,14 +38,14 @@ export const Home = (): JSX.Element => {
   const [out, setOut] = useState<any>({})
   const [inputTree, setTree] = useState<BaseTreeNode<Attributes> | undefined>()
 
-  // Error.stackTraceLimit = Infinity
-  const outputTree = inputTree ? layout(inputTree) : undefined
+  const { tree, width, height } = inputTree ? layout(inputTree) : ({} as any)
 
   const run = useCallback(() => {
     const input = [randomTarget(), randomInputs(6)] as const
-    // many solutions
-    // const input = [550, [50, 75, 5, 2, 9, 3]] as const
-    // const input = [13, [11, 6, 8]] as const
+    // const input = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
+    // const input = [13, [11, 6, 8]] as const // few solutions
+    // const input = [156, [50, 25, 75, 100, 2, 8]] as const // 207 solutions
+    // const input = [105, [50, 5, 4, 8, 10, 4]] as const // many duplicate solutions
     const [target] = input
     const root = {
       attributes: { char: '', distance: target, output: 0 },
@@ -62,7 +62,7 @@ export const Home = (): JSX.Element => {
           length: results.length,
           results,
           done: true,
-          generated: data.generated,
+          permutations: data.permutations,
         })
       }
       if (data.type === 'result') {
@@ -109,7 +109,12 @@ export const Home = (): JSX.Element => {
             node = child
           }
           setTree(root)
-          setOut({ input, length: results.length, results })
+          setOut({
+            input,
+            length: results.length,
+            results,
+            permutations: x.permutations,
+          })
         }
         // if (x.distance === 0) worker.postMessage({ type: 'stop' })
       }
@@ -123,7 +128,12 @@ export const Home = (): JSX.Element => {
       <button onClick={run}>Run again</button>
       <pre>
         {JSON.stringify(
-          { input: out.input, length: out.results?.length },
+          {
+            input: out.input,
+            length: out.results?.length,
+            done: out.done,
+            permutations: out.permutations,
+          },
           null,
           2
         )}
@@ -131,11 +141,14 @@ export const Home = (): JSX.Element => {
       <div
         style={{
           position: 'relative',
-          margin: '20px',
+          margin: '0 auto',
+          maxWidth: '500px',
         }}
       >
-        <svg viewBox="0 0 347 5000">
-          <Tree tree={outputTree} />
+        <svg
+          viewBox={`0 0 ${(height || 0) * 50 + 50} ${(width || 0) * 50 + 50}`}
+        >
+          <Tree tree={tree} />
         </svg>
       </div>
       {/* <pre>{JSON.stringify(outputTree, null, 2)}</pre>

@@ -1,6 +1,5 @@
 /// <reference lib="webworker" />
 
-// This is a module worker, so we can use imports (in the browser too!)
 import { solve } from './solver/solver'
 let shouldContinue = true
 let i = 0
@@ -16,29 +15,24 @@ addEventListener('message', async (event) => {
     strings = new Set<string>()
     i = 0
     shouldContinue = true
-    const input = event.data.input as Parameters<typeof solve> // TODO: fix this
+    const input = event.data.input as Parameters<typeof solve>
     for (const x of solve(...input)) {
       const asStr = x.expression.join(' ')
-      if (strings.has(asStr)) {
-        // console.log('dupe', asStr)
-      } else {
+      if (!strings.has(asStr)) {
+        // we can get duplicates if the list has dupes
         strings.add(asStr)
         postMessage({
           type: 'result',
           ...x,
           formatted: `${asStr} = ${x.output} :: (${x.distance})`,
+          permutations: i,
         })
       }
       if (++i % 20000 === 0) {
-        console.log('generated', i) // eslint-disable-line no-console
         await sleep(0)
-        if (!shouldContinue) {
-          console.log('break') // eslint-disable-line no-console
-          break
-        }
+        if (!shouldContinue) break
       }
     }
-    postMessage({ type: 'done', generated: i })
-    console.log('done', i) // eslint-disable-line no-console
+    postMessage({ type: 'done', permutations: i })
   }
 })

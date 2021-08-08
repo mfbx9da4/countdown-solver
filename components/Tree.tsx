@@ -30,8 +30,8 @@ export function Tree({ tree }: Props) {
           y1={y}
           x2={getX(child)}
           y2={getY(child)}
-          stroke="lime"
           strokeWidth="2"
+          style={{ stroke: 'var(--font-color)' }}
         />
       ))}
       <g>
@@ -53,24 +53,12 @@ export function Tree({ tree }: Props) {
           alignmentBaseline="middle"
           textAnchor="middle"
           style={{
+            fontSize: '12px',
             fill: attributes.isTarget ? 'white' : 'var(--font-color)',
           }}
         >
           {attributes.char || 'root'}
         </text>
-
-        {/* {attributes.distance !== undefined && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '-12px',
-              right: '-12px',
-              fontSize: '10px',
-            }}
-          >
-            ({attributes.distance})
-          </div>
-        )} */}
       </g>
       {tree.children.map((x, i) => (
         <Tree key={i} tree={x} />
