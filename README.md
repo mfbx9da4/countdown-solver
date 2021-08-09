@@ -22,7 +22,9 @@ The numbers round goes like this:
   not to block the main thread.
 - [Tree layout algorithm](https://github.com/mfbx9da4/countdown-solver/blob/main/layout/davidStrategy.ts).
   The main thread keeps a tree in memory. As each solution is yielded from the web
-  worker, the main thread adds it to the tree. The tree is then run through a [homegrown layout algorithm](https://github.com/mfbx9da4/countdown-solver/blob/main/layout/davidStrategy.ts) to absolutely position the nodes and edges.
+  worker, the main thread adds it to the tree. The tree is then run through a [homegrown layout algorithm](https://github.com/mfbx9da4/countdown-solver/blob/main/layout/davidStrategy.ts) to absolutely position the nodes and edges. The algorithm works by keeping track of nodes at any given
+  depth and what the right most node of the partial tree is at any time. Each node is then positioned as far left as possible provided it's greater
+  than previous siblings at that depth and the right most node. (Explanation assumes vertical layout).
 - [Tree drawing in svg](https://github.com/mfbx9da4/countdown-solver/blob/main/components/Tree.tsx). Using
   react, svg `circle`s and `line`s are absolutely positioned.
 - For fun I also worked out [how many possible expressions there are](https://math.stackexchange.com/questions/4219234/how-many-valid-expressions-for-countdown-numbers-round).
