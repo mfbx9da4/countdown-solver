@@ -1,12 +1,13 @@
 /// <reference lib="webworker" />
 
 import { solve } from './solver/solver'
-let abortController = new AbortController()
+import { AbortSignal } from './utils/AbortSignal'
+let abortSignal: AbortSignal | undefined
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const start = async (input: Parameters<typeof solve>) => {
-  abortController = new AbortController()
+  abortSignal = new AbortSignal()
   let i = 0
   const strings = new Set<string>()
   for (const x of solve(...input)) {
@@ -18,39 +19,18 @@ const start = async (input: Parameters<typeof solve>) => {
     }
     if (++i % 20000 === 0) {
       await sleep(0)
-      if (abortController.signal.aborted) {
-        break
-      }
+      if (abortSignal.pending) break
     }
   }
   postMessage({ type: 'done', permutations: i })
+  abortSignal.done()
 }
-
-const createQueue = () => {
-  let tasks = []
-  let running = false
-  const run = async () => {
-    running = true
-    while (tasks.length) {
-      const fn = tasks.pop()
-      await fn()
-    }
-    running = false
-  }
-  const push = (fn) => {
-    tasks[0] = fn
-    if (!running) run()
-  }
-  return { push }
-}
-
-const queue = createQueue()
 
 addEventListener('message', async (event) => {
   if (event.data.type === 'start' || event.data.type === 'stop') {
-    abortController.abort()
+    if (abortSignal) await abortSignal.abort()
   }
   if (event.data.type === 'start') {
-    queue.push(() => start(event.data.input))
+    await start(event.data.input)
   }
 })
