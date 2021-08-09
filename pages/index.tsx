@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Head } from '../components/Head'
 import { Tree } from '../components/Tree'
 import { BaseTreeNode, layout } from '../layout/layout'
 import { choose, randInt } from '../solver/randInt'
@@ -208,6 +209,7 @@ export const Home = (): JSX.Element => {
           </svg>
         ) : null}
       </div>
+      <Head />
       <style jsx global>{`
         :root {
           --background: #202124;
