@@ -17,7 +17,7 @@ Props) => {
   const metaName = {
     author: SEO.author,
     robots: 'index,follow',
-    viewport: 'width=device-width, initial-scale=1',
+    // viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
     description: description || SEO.description,
     'theme-color': '#202124',
     'naver-site-verification': '',
