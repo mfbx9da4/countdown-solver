@@ -46,7 +46,7 @@ export const Home = (): JSX.Element => {
     // const inputArgs = [952, [25, 50, 75, 100, 3, 6]] as const // only one solution
     // const inputArgs = [13, [11, 6, 8]] as const // few solutions
     // const inputArgs = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
-    // const inputArgs = [ 662, [ 100, 50, 2, 5, 1, 5 ] ] as const // no solution
+    // const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
     const [target, input] = inputArgs
     const root = {
       attributes: { char: '', distance: target, outputs: [] },
@@ -135,18 +135,14 @@ export const Home = (): JSX.Element => {
           <div className="info-table">
             <div>Inputs:</div>
             <div>
-              <div style={{ display: 'flex' }}>
-                {out.input?.map((x, i) => (
-                  <div className="input-number" key={i}>
-                    {x}
-                  </div>
-                ))}
-              </div>
+              <div style={{ display: 'flex' }}>{out.input?.join(', ')}</div>
             </div>
             <div>Target:</div>
             <div>{out.target}</div>
             <div>Permutations:</div>
             <div>{out.permutations}</div>
+            <div>Solutions:</div>
+            <div>{out.solutions}</div>
             <div>Done:</div>
             <div>{out.done ? '✅' : '⏳'}</div>
           </div>
@@ -199,11 +195,18 @@ export const Home = (): JSX.Element => {
           maxWidth: '500px',
         }}
       >
-        <svg
-          viewBox={`0 0 ${(height || 0) * 50 + 50} ${(width || 0) * 50 + 50}`}
+        <div
+          style={{ textAlign: 'center', paddingTop: '24px', fontSize: '21px' }}
         >
-          <Tree tree={tree} />
-        </svg>
+          {out.solutions === 0 && 'No solutions found 🤷🏻‍♂️'}
+        </div>
+        {out.solutions ? (
+          <svg
+            viewBox={`0 0 ${(height || 0) * 50 + 50} ${(width || 0) * 50 + 50}`}
+          >
+            <Tree tree={tree} />
+          </svg>
+        ) : null}
       </div>
       <style jsx global>{`
         :root {
@@ -227,11 +230,17 @@ export const Home = (): JSX.Element => {
         }
         .info-table {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 163px 163px;
           padding: 4px 0;
         }
         .info-table > div {
           padding: 4px;
+        }
+
+        // label
+        .info-table > div:nth-child(odd) {
+          color: #9e9e9e;
+          text-align: right;
         }
 
         .input-number {
