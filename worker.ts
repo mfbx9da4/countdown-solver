@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 
-import { Result, solve } from './solver/solver'
+import { solve } from './solver/solver'
+import { Result } from './solver/Result'
 import { AbortSignal } from './utils/AbortSignal'
 let abortSignal: AbortSignal | undefined
 
@@ -8,17 +9,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export type DisplayResult = Result & {
   type: 'result'
-  path: string[]
   permutations: number
-}
-
-const formatPath = (x: Result) => {
-  const path: string[] = [x.expression[0].toString()]
-  for (let i = 1; i < x.expression.length; i += 2) {
-    const char = `${x.expression[i]}${x.expression[i + 1]}`
-    path.push(char)
-  }
-  return path
 }
 
 const start = async (input: Parameters<typeof solve>) => {
@@ -26,17 +17,12 @@ const start = async (input: Parameters<typeof solve>) => {
   let i = 0
   const strings = new Set<string>()
   for (const x of solve(...input)) {
-    const asStr = x.expression.join(' ')
+    const asStr = x.resultId
     if (!strings.has(asStr)) {
       // we can get duplicates if the input list has dupes
       strings.add(asStr)
-      const path = formatPath(x)
-      const result: DisplayResult = {
-        type: 'result',
-        path,
-        ...x,
-        permutations: i,
-      }
+      const result: DisplayResult = { type: 'result', permutations: i, ...x }
+      // console.log('result', result)
       postMessage(result)
     }
     if (++i % 20000 === 0) {

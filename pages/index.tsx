@@ -31,8 +31,6 @@ export type Attributes = {
   isOp?: boolean
   isLeaf?: boolean
   isTarget?: boolean
-  expression?: string | number[]
-  outputs: number[]
   distance?: number
 }
 
@@ -48,15 +46,15 @@ export const Home = (): JSX.Element => {
   const { tree, width, height } = inputTree ? layout(inputTree) : ({} as any)
 
   const run = useCallback(() => {
-    const inputArgs = [randomTarget(), randomInputs(6)] as const
+    // const inputArgs = [randomTarget(), randomInputs(6)] as const
     // const inputArgs = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
     // const inputArgs = [952, [25, 50, 75, 100, 3, 6]] as const // only one solution
     // const inputArgs = [13, [11, 6, 8]] as const // few solutions
     // const inputArgs = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
-    // const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
+    const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
     const [target, input] = inputArgs
     const root: DisplayTreeNode = {
-      attributes: { char: '', distance: target, outputs: [] },
+      attributes: { char: '', distance: target },
       children: [],
     }
     setTree(root)
@@ -80,22 +78,21 @@ export const Home = (): JSX.Element => {
 
         let node = root
         for (let i = 0; i < x.path.length; i++) {
-          const char = x.path[i]
+          const { value } = x.path[i]
           let isLeaf = i === x.path.length - 1
-          let child = node.children.find((y) => y.attributes.char === char)
+          let child = node.children.find((y) => y.attributes.char === value)
           if (!child) {
             child = {
               attributes: {
-                ...x,
-                char,
+                char: value,
                 isLeaf,
-                expression: undefined,
                 isTarget: isLeaf && x.distance === 0,
               },
               children: [],
             }
             node.children.push(child)
           }
+          node = child
         }
         setTree(root)
         setOut({
@@ -182,7 +179,7 @@ export const Home = (): JSX.Element => {
           position: 'relative',
           padding: '0 10px',
           margin: '0 auto',
-          maxWidth: '500px',
+          maxWidth: '800px',
         }}
       >
         <div

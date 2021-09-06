@@ -1,3 +1,6 @@
+import { partitions } from './combinations'
+import { Result as DisplayResult } from './Result'
+
 const ops = ['*', '/', '+', '-'] as const
 const applyOp: Record<Op, (a: number, b: number) => number> = {
   '*': (a, b) => a * b,
@@ -11,112 +14,87 @@ const close = ')'
 type Paren = typeof open | typeof close
 export type Expression = Array<Op | Paren | number>
 
-interface Node {
-  outputs: number[]
-  expression: Expression
-  needsOp: boolean
-  remaining: number[]
-}
-
-export interface Result {
-  expression: Expression
-  outputs: number[]
-  distance: number
-}
-
 export function evaluatePair(a: number, b: number, op: Op): number {
   return applyOp[op](a, b)
 }
 
-function evaluate(node: Node) {
-  return evaluatePair(
-    node.outputs[node.outputs.length - 1] || 0,
-    (node.expression[node.expression.length - 1] as number) || 0,
-    (node.expression[node.expression.length - 2] as Op) || '+'
-  )
+interface NumberNode {
+  type: 'number'
+  value: number
+}
+interface ExpressionNode {
+  type: 'expression'
+  value: number
+  left: Node
+  right: Node
+  op: Op
 }
 
-/**
- * Explores every permutation of the inputs.
- * Dedupes associative operations.
- */
+type Node = NumberNode | ExpressionNode
+
+function* generateExpression(remaining: number[]): Generator<Node, void, Node> {
+  for (const num of remaining) yield { type: 'number', value: num }
+  for (const partition of partitions(remaining)) {
+    for (const left of generateExpression(partition.left)) {
+      for (const right of generateExpression(partition.right)) {
+        for (const op of ops) {
+          const value = evaluatePair(left.value, right.value, op)
+          if (!isValid(value)) continue
+          yield { type: 'expression', value, op, left, right }
+        }
+      }
+    }
+  }
+}
+
+function isValid(value: number) {
+  return value > 0 && Number.isSafeInteger(value)
+}
+
 export function* solve(
   target: number,
   inputs: number[]
-): Generator<Result, void, Result> {
-  if (!inputs.length) throw new Error('no inputs')
-  const root: Node = {
-    outputs: [],
-    expression: [],
-    needsOp: false,
-    remaining: inputs,
+): Generator<DisplayResult, void, DisplayResult> {
+  for (const expression of generateExpression(inputs)) {
+    if (expression.value === target) yield format(expression, target)
   }
+}
 
-  const queue = []
-  queue.push(root)
-  while (queue.length) {
-    const node = queue.pop()
+function formatPath(node: Node): DisplayResult['path'] {
+  if (node.type === 'number') {
+    return [{ value: node.value.toString(), partialOutput: node.value }]
+  }
+  const ret: DisplayResult['path'] = []
+  if (node.left.type === 'number') {
+    ret.push({
+      value: node.left.value.toString(),
+      partialOutput: node.left.value,
+    })
+  } else {
+    ret.push({ value: '(', partialOutput: node.left.value })
+    ret.push(...formatPath(node.left))
+    ret.push({ value: ')', partialOutput: node.left.value })
+  }
+  ret.push({ value: node.op, partialOutput: node.value })
+  if (node.right.type === 'number') {
+    ret.push({
+      value: node.right.value.toString(),
+      partialOutput: node.right.value,
+    })
+  } else {
+    ret.push({ value: '(', partialOutput: node.right.value })
+    ret.push(...formatPath(node.right))
+    ret.push({ value: ')', partialOutput: node.right.value })
+  }
+  return ret
+}
 
-    if (node.needsOp) {
-      let bestDistance = Infinity
-      const output = evaluate(node)
-      // as per countdown rules can never go below zero, must be int
-      const isValid = Number.isSafeInteger(output) && output > 0
-      const distance = isValid ? Math.abs(target - output) : Infinity
-      bestDistance = Math.min(distance, bestDistance)
-      const outputs = [...node.outputs, output]
-      const result: Result = { expression: node.expression, outputs, distance }
-      yield result
-      if (!isValid) continue // early exit from exploring further
-
-      if (node.remaining.length !== 0) {
-        // add an op
-        for (const op of ops) {
-          const child: Node = {
-            ...node,
-            outputs,
-            expression: [...node.expression, op],
-            needsOp: false,
-          }
-          queue.push(child)
-        }
-      }
-    } else {
-      for (let i = 0; i < node.remaining.length; i++) {
-        // pick a number from remaining
-        const num = node.remaining[i]
-
-        // Dedupes associative operations.
-        const op = node.expression[node.expression.length - 1]
-        const lastNum = node.expression[node.expression.length - 2]
-        const lastOp = node.expression[node.expression.length - 3]
-        if (
-          op === '+' &&
-          (lastOp === '+' || lastOp === undefined) &&
-          num > lastNum
-        ) {
-          continue // dedupe addition
-        }
-        if (
-          op === '*' &&
-          (lastOp === '*' || lastOp === undefined) &&
-          num > lastNum
-        ) {
-          continue // dedupe multiplication
-        }
-
-        const remaining = [
-          ...node.remaining.slice(0, i),
-          ...node.remaining.slice(i + 1),
-        ]
-        const child: Node = {
-          ...node,
-          remaining,
-          expression: [...node.expression, num],
-          needsOp: true,
-        }
-        queue.push(child)
-      }
-    }
+function format(node: Node, target: number): DisplayResult {
+  const path = formatPath(node)
+  return {
+    output: node.value,
+    distance: target - node.value,
+    path,
+    resultId: path.map((x) => x.value).join(''),
   }
 }
