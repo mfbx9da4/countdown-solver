@@ -51,7 +51,9 @@ export const Home = (): JSX.Element => {
     // const inputArgs = [952, [25, 50, 75, 100, 3, 6]] as const // only one solution
     // const inputArgs = [13, [11, 6, 8]] as const // few solutions
     // const inputArgs = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
-    const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
+    // const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
+    const inputArgs = [284, [1, 7, 7, 10, 50, 100]] as const // from github issue
+    // const inputArgs = [284, [1, 7, 10]] as const // no solution
     const [target, input] = inputArgs
     const root: DisplayTreeNode = {
       attributes: { char: '', distance: target },

@@ -15,23 +15,28 @@ export type DisplayResult = Result & {
 const start = async (input: Parameters<typeof solve>) => {
   abortSignal = new AbortSignal()
   let i = 0
-  const strings = new Set<string>()
+  const strings: { [k: string]: number } = {}
   for (const x of solve(...input)) {
     const asStr = x.resultId
-    if (!strings.has(asStr)) {
+    if (!(asStr in strings)) {
       // we can get duplicates if the input list has dupes
-      strings.add(asStr)
       const result: DisplayResult = { type: 'result', permutations: i, ...x }
       // console.log('result', result)
       postMessage(result)
     }
+    strings[asStr] = (strings[asStr] || 0) + 1
     if (++i % 20000 === 0) {
+      console.log('i', i)
       await sleep(0)
       if (abortSignal.pending) break
     }
   }
   postMessage({ type: 'done', permutations: i })
   abortSignal.done()
+  console.log(
+    'strings',
+    Object.fromEntries(Object.entries(strings).filter((x) => x[1] > 1))
+  )
 }
 
 addEventListener('message', async (event) => {

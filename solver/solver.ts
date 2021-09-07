@@ -33,12 +33,16 @@ interface ExpressionNode {
 type Node = NumberNode | ExpressionNode
 
 function* generateExpression(remaining: number[]): Generator<Node, void, Node> {
-  for (const num of remaining) yield { type: 'number', value: num }
+  // console.log('remaining', remaining)
+  if (remaining.length === 1) yield { type: 'number', value: remaining[0] }
   for (const partition of partitions(remaining)) {
+    // console.log('partition', partition)
     for (const left of generateExpression(partition.left)) {
       for (const right of generateExpression(partition.right)) {
         for (const op of ops) {
           const value = evaluatePair(left.value, right.value, op)
+          // const xl = format(left, 1).resultId
+          // const xr = format(right, 1).resultId
           if (!isValid(value)) continue
           yield { type: 'expression', value, op, left, right }
         }
@@ -56,7 +60,9 @@ export function* solve(
   inputs: number[]
 ): Generator<DisplayResult, void, DisplayResult> {
   for (const expression of generateExpression(inputs)) {
-    if (expression.value === target) yield format(expression, target)
+    let res = format(expression, target).resultId
+    // console.log(res)
+    yield format(expression, target)
   }
 }
 
@@ -95,6 +101,6 @@ function format(node: Node, target: number): DisplayResult {
     output: node.value,
     distance: target - node.value,
     path,
-    resultId: path.map((x) => x.value).join(''),
+    resultId: path.map((x) => x.value).join(' '),
   }
 }

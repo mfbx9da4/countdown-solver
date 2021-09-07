@@ -43,10 +43,10 @@ export interface Partition<T> {
 export function partitions<T>(arr: T[]): Partition<T>[] {
   if (arr.length <= 1) return []
   const ret: Partition<T>[] = []
-  for (let i = 1; i < arr.length - 1; i++) {
+  for (let i = 0; i < arr.length; i++) {
     for (const combination of combinations(arr, i)) {
       ret.push({ left: combination.combination, right: combination.remaining })
-      ret.push({ left: combination.remaining, right: combination.combination })
+      // ret.push({ left: combination.remaining, right: combination.combination })
     }
   }
   return ret
