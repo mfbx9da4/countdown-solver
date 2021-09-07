@@ -3,6 +3,7 @@ import { Head } from '../components/Head'
 import { Tree } from '../components/Tree'
 import { BaseTreeNode, layout } from '../layout/layout'
 import { choose, randInt } from '../solver/randInt'
+import { DisplayResult } from '../worker'
 
 const bigOneGenerator = () => choose([25, 50, 75, 100])
 const smallOneGenerator = () => {
@@ -30,9 +31,12 @@ export type Attributes = {
   isOp?: boolean
   isLeaf?: boolean
   isTarget?: boolean
-  expression?: string[]
-  outputs: number[]
   distance?: number
+}
+
+interface DisplayTreeNode {
+  attributes: Attributes
+  children: DisplayTreeNode[]
 }
 
 export const Home = (): JSX.Element => {
@@ -42,15 +46,17 @@ export const Home = (): JSX.Element => {
   const { tree, width, height } = inputTree ? layout(inputTree) : ({} as any)
 
   const run = useCallback(() => {
-    const inputArgs = [randomTarget(), randomInputs(6)] as const
+    // const inputArgs = [randomTarget(), randomInputs(6)] as const
     // const inputArgs = [ 966, [ 75, 25, 100, 50, 4, 3 ] ] // only one solution
     // const inputArgs = [952, [25, 50, 75, 100, 3, 6]] as const // only one solution
     // const inputArgs = [13, [11, 6, 8]] as const // few solutions
     // const inputArgs = [180, [ 6, 5, 3, 4, 10, 8 ]] as const // 325 solutions
     // const inputArgs = [662, [100, 50, 2, 5, 1, 5]] as const // no solution
+    const inputArgs = [284, [1, 7, 7, 10, 50, 100]] as const // from github issue
+    // const inputArgs = [284, [1, 7, 10]] as const // no solution
     const [target, input] = inputArgs
-    const root = {
-      attributes: { char: '', distance: target, outputs: [] },
+    const root: DisplayTreeNode = {
+      attributes: { char: '', distance: target },
       children: [],
     }
     setTree(root)
@@ -68,53 +74,35 @@ export const Home = (): JSX.Element => {
         })
       }
       if (data.type === 'result') {
-        const x = data
-        if (x.distance === 0) {
-          results.push(x.formatted)
+        const x = data as DisplayResult
+        if (x.distance !== 0) return
+        results.push(x)
 
-          let isLeaf = 0 === x.expression.length - 1
-          let subtree = root.children.find(
-            (y) => y.attributes.char === x.expression[0]
-          )
-          if (!subtree) {
-            subtree = {
+        let node = root
+        for (let i = 0; i < x.path.length; i++) {
+          const { value } = x.path[i]
+          let isLeaf = i === x.path.length - 1
+          let child = node.children.find((y) => y.attributes.char === value)
+          if (!child) {
+            child = {
               attributes: {
-                ...x,
-                char: x.expression[0],
+                char: value,
                 isLeaf,
                 isTarget: isLeaf && x.distance === 0,
               },
               children: [],
             }
-            root.children.push(subtree)
+            node.children.push(child)
           }
-          let node = subtree
-          for (let i = 1; i < x.expression.length; i += 2) {
-            isLeaf = i === x.expression.length - 2
-            const char = x.expression[i] + x.expression[i + 1]
-            let child = node.children.find((y) => y.attributes.char === char)
-            if (!child) {
-              child = {
-                attributes: {
-                  ...x,
-                  char,
-                  isLeaf,
-                  isTarget: isLeaf && x.distance === 0,
-                },
-                children: [],
-              }
-              node.children.push(child)
-            }
-            node = child
-          }
-          setTree(root)
-          setOut({
-            input,
-            target,
-            solutions: results.length,
-            permutations: x.permutations,
-          })
+          node = child
         }
+        setTree(root)
+        setOut({
+          input,
+          target,
+          solutions: results.length,
+          permutations: x.permutations,
+        })
       }
     }
   }, [])
@@ -193,7 +181,7 @@ export const Home = (): JSX.Element => {
           position: 'relative',
           padding: '0 10px',
           margin: '0 auto',
-          maxWidth: '500px',
+          maxWidth: '800px',
         }}
       >
         <div

@@ -50,7 +50,7 @@ export function Tree({ tree, depth }: Props) {
           stroke={attributes.isTarget ? 'white' : 'var(--font-color)'}
           strokeWidth="2"
         >
-          <title>{attributes.outputs[depth]}</title>
+          <title>{attributes.char}</title>
         </circle>
         <text
           x={x}
@@ -63,7 +63,7 @@ export function Tree({ tree, depth }: Props) {
             userSelect: 'none',
           }}
         >
-          <title>{attributes.outputs[depth]}</title>
+          <title>{attributes.char}</title>
           {attributes.char || 'root'}
         </text>
       </g>
